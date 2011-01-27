@@ -39,16 +39,17 @@ if ( defined $ARGV[0] and $ARGV[0] eq "autoconf" ) {
 if ( defined $ARGV[0] and $ARGV[0] eq "config" ) {
 	print('graph_title PHP5-FPM Accepted Connections
 graph_args --base 1024 -l 0
-graph_vlabel Connections
+graph_vlabel connections
 graph_category PHP
-graph_order Connections
+graph_order accepted
 graph_info Plugin created by TJ Stein
 accepted.label Idle
 accepted.draw AREA
 accepted.type DERIVE
 accepted.min 0
+connections.label Idle
+connections.draw AREA
 ');
-
 	exit 0;
 }
 
