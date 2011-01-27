@@ -10,7 +10,7 @@ if (! eval "require LWP::UserAgent;") {
 	$ret = "LWP::UserAgent not found";
 }
 
-my $URL = exists $ENV{'munin_phpfpm_url'} ? $ENV{'munin_phpfpm_url'} : "http://127.0.0.1:%d/status";
+my $URL = exists $ENV{'munin_phpfpm_url'} ? $ENV{'munin_phpfpm_url'} : "http://127.0.0.1:%d/fpm_status";
 my @PORTS = exists $ENV{'munin_phpfpm_ports'} ? split(' ', $ENV{'munin_phpfpm_ports'}) : (80);
 
 if ( defined $ARGV[0] and $ARGV[0] eq "autoconf" ) {
