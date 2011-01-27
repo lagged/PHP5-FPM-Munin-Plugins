@@ -6,41 +6,37 @@
 
 my $ret = undef;
 
-if (! eval "require LWP::UserAgent;")
-{
+if (! eval "require LWP::UserAgent;") {
 	$ret = "LWP::UserAgent not found";
 }
 
-my $URL = exists $ENV{'url'} ? $ENV{'url'} : "http://127.0.0.1:%d/status";
-my @PORTS = exists $ENV{'ports'} ? split(' ', $ENV{'ports'}) : (80);
+my $URL = exists $ENV{'munin_phpfpm_url'} ? $ENV{'munin_phpfpm_url'} : "http://127.0.0.1:%d/status";
+my @PORTS = exists $ENV{'munin_phpfpm_ports'} ? split(' ', $ENV{'munin_phpfpm_ports'}) : (80);
 
-if ( defined $ARGV[0] and $ARGV[0] eq "autoconf" )
-{
-	if ($ret)
-	{
-		print "no ($ret)\n";
-		exit 1;
-	}
+if ( defined $ARGV[0] and $ARGV[0] eq "autoconf" ) {
+    if ($ret) {
+        print "no ($ret)\n";
+        exit 1;
+    }
 
-	my $ua = LWP::UserAgent->new(timeout => 30);
+    my $ua = LWP::UserAgent->new(timeout => 30);
 
-	my @badports;
-	foreach my $port (@PORTS) {
-		my $url = sprintf $URL, $port;
-		my $response = $ua->request(HTTP::Request->new('GET',$url));
-		push @badports, $port unless $response->is_success and $response->content =~ /^accepted conn:/im;
-	}
-	if (@badports) {
-		print "no (phpfpm-status)\n";
-		exit 1;
-	} else {
-		print "yes\n";
-		exit 0;
-	}
+    my @badports;
+    foreach my $port (@PORTS) {
+        my $url = sprintf $URL, $port;
+        my $response = $ua->request(HTTP::Request->new('GET',$url));
+        push @badports, $port unless $response->is_success and $response->content =~ /^accepted conn:/im;
+    }
+    if (@badports) {
+        print "no (phpfpm-status)\n";
+        exit 1;
+    } else {
+        print "yes\n";
+        exit 0;
+    }
 }
 
-if ( defined $ARGV[0] and $ARGV[0] eq "config" )
-{
+if ( defined $ARGV[0] and $ARGV[0] eq "config" ) {
 	print('graph_title PHP5-FPM Status
 graph_args --base 1024 -l 0
 graph_vlabel Connections
@@ -54,26 +50,24 @@ active.draw AREA
 total.label Total
 total.draw STACK
 ');
-
-	exit 0;
+    exit 0;
 }
 
-foreach my $port (@PORTS)
-{
+foreach my $port (@PORTS) {
     my $ua = LWP::UserAgent->new(timeout => 30);
     my $url = sprintf $URL, $port;
     my $response = $ua->request(HTTP::Request->new('GET',$url));
-	if ($response->content =~ /idle processes:\s+([0-9\.]+)/im) {
+    if ($response->content =~ /idle processes:\s+([0-9\.]+)/im) {
         print "idle.value $1\n";
     } else {
         print "idle.value U\n";
     }
-	if ($response->content =~ /active processes:\s+([0-9\.]+)/im) {
+    if ($response->content =~ /active processes:\s+([0-9\.]+)/im) {
         print "active.value $1\n";
     } else {
         print "active.value U\n";
     }
-	if ($response->content =~ /total processes:\s+([0-9\.]+)/im) {
+    if ($response->content =~ /total processes:\s+([0-9\.]+)/im) {
         print "total.value $1\n";
     } else {
         print "total.value U\n";
