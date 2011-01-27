@@ -16,6 +16,7 @@
 #%# capabilities=autoconf
 
 PHP_BIN=${munin_phpbin-"php5-fpm"}
+PHP_BIN=$(which $PHP_BIN)
 
 if [ ! -x "${PHP_BIN}" ]; then
     echo "Not found or not executable: ${PHP_BIN}"
